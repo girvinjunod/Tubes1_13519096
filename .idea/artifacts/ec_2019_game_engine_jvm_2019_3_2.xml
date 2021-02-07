@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="ec-2019-game-engine-jvm-2019.3.2">
-    <output-path>D:\git\Tubes1_13519096\src\2019-Worms-2019.3.2\game-engine\build\libs</output-path>
-    <root id="archive" name="ec-2019-game-engine-jvm-2019.3.2.jar">
-      <element id="module-output" name="ec-2019-game-engine.jvmMain" />
-    </root>
-  </artifact>
-</component>

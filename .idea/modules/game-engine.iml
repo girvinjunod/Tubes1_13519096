@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$/../../src/2019-Worms-2019.3.2/game-engine" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-</module>
