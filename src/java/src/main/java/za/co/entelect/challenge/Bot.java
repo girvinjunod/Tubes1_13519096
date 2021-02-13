@@ -35,9 +35,19 @@ public class Bot {
         if (enemyWorm != null) {
             Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
             return new ShootCommand(direction);
+        }else if (enemyWorm != null && gameState.currentRound>60){
+            Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
+            return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
         }
 
-        List<Cell> surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
+        List<Cell> surroundingBlocks;
+
+        if(gameState.currentRound<90){
+            surroundingBlocks = get_cell_sekitar_tengah(currentWorm.position.x, currentWorm.position.y);
+        } else{
+            surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
+        }
+
         int cellIdx = random.nextInt(surroundingBlocks.size());
 
         Cell block = surroundingBlocks.get(cellIdx);
@@ -107,6 +117,29 @@ public class Bot {
                     cells.add(gameState.map[j][i]);
                 }
             }
+        }
+
+        return cells;
+    }
+
+    private List<Cell> get_cell_sekitar_tengah(int x, int y) {
+        ArrayList<Cell> cells = new ArrayList<>();
+        int jarak_pusat = 999999;
+        int temp_x = 0;
+        int temp_y = 0;
+        for (int i = x - 1; i <= x + 1; i++) {
+            for (int j = y - 1; j <= y + 1; j++) {
+                // Don't include the current position
+                int a = euclideanDistance(i, j, 16,16);
+                if (a<=jarak_pusat){
+                    jarak_pusat = a;
+                    temp_x = i;
+                    temp_y = j;
+                }
+            }
+        }
+        if (temp_x != x || temp_y != y && isValidCoordinate(temp_x, temp_y)) {
+            cells.add(gameState.map[temp_y][temp_x]);
         }
 
         return cells;
