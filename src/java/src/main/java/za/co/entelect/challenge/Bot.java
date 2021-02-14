@@ -29,20 +29,28 @@ public class Bot {
                 .get();
     }
 
+    //Di sini main nya
     public Command run() {
-
+        //Penyerangan
         Worm enemyWorm = getFirstWormInRange();
         if (enemyWorm != null) {
-            Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
-            return new ShootCommand(direction);
-        }else if (enemyWorm != null && gameState.currentRound>60){
-            Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
-            return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
+
+            if (currentWorm.id==2 && gameState.currentRound >20 && gameState.currentRound <70 ) {
+                return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
+            }
+            else if (currentWorm.id==3 && gameState.currentRound >20 && gameState.currentRound <60) {
+                return new SnowballCommand(enemyWorm.position.x, enemyWorm.position.y);
+            }
+            else {
+                Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
+                return new ShootCommand(direction);
+            }
         }
 
+        //Perpindahan
         List<Cell> surroundingBlocks;
 
-        if(gameState.currentRound<90){
+        if(gameState.currentRound<=90){
             surroundingBlocks = get_cell_sekitar_tengah(currentWorm.position.x, currentWorm.position.y);
         } else{
             surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
@@ -60,6 +68,7 @@ public class Bot {
         return new DoNothingCommand();
     }
 
+    //Di bawah adalah implementasi function nya
     private Worm getFirstWormInRange() {
 
         Set<String> cells = constructFireDirectionLines(currentWorm.weapon.range)
