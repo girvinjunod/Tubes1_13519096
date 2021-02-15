@@ -34,7 +34,7 @@ public class Bot {
     public Command run() {
         //Penyerangan
         Worm enemyWorm = getFirstWormInRange();
-        if (enemyWorm != null && euclideanDistance(currentWorm.position.x,currentWorm.position.y,enemyWorm.position.x,enemyWorm.position.y)<=5) {
+        if (enemyWorm != null) {
             if (canBanana(enemyWorm)) {
                 return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
             }
@@ -78,9 +78,11 @@ public class Bot {
                 .collect(Collectors.toSet());
 
         for (Worm enemyWorm : opponent.worms) {
-            String enemyPosition = String.format("%d_%d", enemyWorm.position.x, enemyWorm.position.y);
-            if (cells.contains(enemyPosition)) {
-                return enemyWorm;
+            if (enemyWorm.health>0) {
+                String enemyPosition = String.format("%d_%d", enemyWorm.position.x, enemyWorm.position.y);
+                if (cells.contains(enemyPosition)) {
+                    return enemyWorm;
+                }
             }
         }
 
