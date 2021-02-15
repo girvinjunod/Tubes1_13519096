@@ -34,8 +34,7 @@ public class Bot {
     public Command run() {
         //Penyerangan
         Worm enemyWorm = getFirstWormInRange();
-        if (enemyWorm != null) {
-
+        if (enemyWorm != null && euclideanDistance(currentWorm.position.x,currentWorm.position.y,enemyWorm.position.x,enemyWorm.position.y)<=5) {
             if (canBanana(enemyWorm)) {
                 return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
             }
@@ -48,7 +47,7 @@ public class Bot {
             }
         }
 
-        //Perpindahan
+        //kalau gaada musuh, dia bergerak (Perpindahan)
         List<Cell> surroundingBlocks;
 
         if(gameState.currentRound<=90){
@@ -197,16 +196,30 @@ public class Bot {
         int verticalComponent = b.y - a.y;
         int horizontalComponent = b.x - a.x;
 
-        if (verticalComponent < 0) {
+        if (verticalComponent < 0 && horizontalComponent==0) {
             builder.append('N');
-        } else if (verticalComponent > 0) {
+        } else if (verticalComponent > 0 && horizontalComponent==0) {
             builder.append('S');
-        }
-
-        if (horizontalComponent < 0) {
+        } else if (horizontalComponent < 0 && verticalComponent==0) {
             builder.append('W');
-        } else if (horizontalComponent > 0) {
+        } else if (horizontalComponent > 0 && verticalComponent==0) {
             builder.append('E');
+        } else if (horizontalComponent > 0 && verticalComponent>0) {
+            if (horizontalComponent == verticalComponent){
+                builder.append("SE");
+            }
+        } else if (horizontalComponent > 0 && verticalComponent < 0) {
+            if (horizontalComponent == -(verticalComponent)) {
+                builder.append("NE");
+            }
+        }else if (horizontalComponent < 0 && verticalComponent > 0) {
+            if (horizontalComponent == -verticalComponent) {
+                builder.append("SW");
+            }
+        }else if (horizontalComponent < 0 && verticalComponent < 0) {
+            if (horizontalComponent == verticalComponent) {
+                builder.append("NW");
+            }
         }
 
         return Direction.valueOf(builder.toString());
