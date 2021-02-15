@@ -29,16 +29,17 @@ public class Bot {
                 .get();
     }
 
+
     //Di sini main nya
     public Command run() {
         //Penyerangan
         Worm enemyWorm = getFirstWormInRange();
         if (enemyWorm != null) {
 
-            if (currentWorm.id==2 && gameState.currentRound >20 && gameState.currentRound <70 ) {
+            if (canBanana(enemyWorm)) {
                 return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
             }
-            else if (currentWorm.id==3 && gameState.currentRound >20 && gameState.currentRound <60) {
+            else if (canSnowball(enemyWorm)) {
                 return new SnowballCommand(enemyWorm.position.x, enemyWorm.position.y);
             }
             else {
@@ -152,6 +153,33 @@ public class Bot {
         }
 
         return cells;
+    }
+
+    private boolean canBanana(Worm target) {
+        return (currentWorm.id==2)
+                && currentWorm.bananaBombs.count > 0
+                && euclideanDistance(currentWorm.position.x,
+                                    currentWorm.position.y,
+                                    target.position.x,
+                                    target.position.y) <= currentWorm.bananaBombs.range
+                && euclideanDistance(currentWorm.position.x,
+                                    currentWorm.position.y,
+                                    target.position.x,
+                                    target.position.y) > currentWorm.bananaBombs.damageRadius * 0.75;
+    }
+
+    private boolean canSnowball(Worm target) {
+        return (currentWorm.id==3)
+                && currentWorm.snowballs.count > 0
+                && target.roundsUntilUnfrozen == 0
+                && euclideanDistance(currentWorm.position.x,
+                                    currentWorm.position.y,
+                                    target.position.x,
+                                    target.position.y) <= currentWorm.snowballs.range
+                && euclideanDistance(currentWorm.position.x,
+                                    currentWorm.position.y,
+                                    target.position.x,
+                                    target.position.y) > currentWorm.snowballs.freezeRadius * Math.sqrt(2);
     }
 
     private int euclideanDistance(int aX, int aY, int bX, int bY) {
