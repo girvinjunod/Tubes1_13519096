@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 
 public class Bot {
 
-    private Random random;
-    private GameState gameState;
-    private Opponent opponent;
-    private MyWorm currentWorm;
+    private final Random random;
+    private final GameState gameState;
+    private final Opponent opponent;
+    private final MyWorm currentWorm;
 
     public Bot(Random random, GameState gameState) {
         this.random = random;
@@ -28,7 +28,6 @@ public class Bot {
                 .findFirst()
                 .get();
     }
-
 
     //Di sini main nya
     public Command run() {
@@ -48,21 +47,36 @@ public class Bot {
         }
 
         //kalau gaada musuh, dia bergerak (Perpindahan)
-        List<Cell> surroundingBlocks;
+        List<Cell> surroundingBlocks = null;
 
-        if(gameState.currentRound<=90){
-            surroundingBlocks = get_cell_sekitar_tengah(currentWorm.position.x, currentWorm.position.y);
-        } else{
+        /*if(gameState.currentRound<=40) {
+            if (currentWorm.id == 1) {
+                surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 14, 18);
+            } else if (currentWorm.id == 2) {
+                surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 18, 14);
+            } else if (currentWorm.id == 3) {
+                surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 14, 14);
+            }
+        }else */if(gameState.currentRound<=90 ||
+                ((currentWorm.position.x >= 15)
+                && (currentWorm.position.x <= 17)
+                && (currentWorm.position.y >= 15)
+                && (currentWorm.position.y <= 17))){
             surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
+        }else{
+            surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 16, 16);
         }
 
-        int cellIdx = random.nextInt(surroundingBlocks.size());
-
-        Cell block = surroundingBlocks.get(cellIdx);
-        if (block.type == CellType.AIR) {
-            return new MoveCommand(block.x, block.y);
-        } else if (block.type == CellType.DIRT) {
-            return new DigCommand(block.x, block.y);
+        if (surroundingBlocks.size() > 0) {
+            int cellIdx = random.nextInt(surroundingBlocks.size());
+            Cell block = surroundingBlocks.get(cellIdx);
+            if (block.type == CellType.AIR) {
+                return new MoveCommand(block.x, block.y);
+            } else if (block.type == CellType.DIRT) {
+                return new DigCommand(block.x, block.y);
+            } else {
+                return new DoNothingCommand();
+            }
         }
 
         return new DoNothingCommand();
@@ -129,21 +143,20 @@ public class Bot {
                 }
             }
         }
-
         return cells;
     }
 
-    private List<Cell> get_cell_sekitar_tengah(int x, int y) {
+    private List<Cell> get_cell_tujuan(int x, int y, int bx, int by) {
         ArrayList<Cell> cells = new ArrayList<>();
-        int jarak_pusat = 999999;
+        int jarak = 999999;
         int temp_x = 0;
         int temp_y = 0;
         for (int i = x - 1; i <= x + 1; i++) {
             for (int j = y - 1; j <= y + 1; j++) {
                 // Don't include the current position
-                int a = euclideanDistance(i, j, 16,16);
-                if (a<=jarak_pusat){
-                    jarak_pusat = a;
+                int a = euclideanDistance(i, j, bx,by);
+                if (a < jarak){
+                    jarak = a;
                     temp_x = i;
                     temp_y = j;
                 }
@@ -152,7 +165,6 @@ public class Bot {
         if (temp_x != x || temp_y != y && isValidCoordinate(temp_x, temp_y)) {
             cells.add(gameState.map[temp_y][temp_x]);
         }
-
         return cells;
     }
 
@@ -210,7 +222,7 @@ public class Bot {
             if (horizontalComponent == verticalComponent){
                 builder.append("SE");
             }
-        } else if (horizontalComponent > 0 && verticalComponent < 0) {
+        } else if (horizontalComponent > 0) {
             if (horizontalComponent == -(verticalComponent)) {
                 builder.append("NE");
             }
@@ -218,7 +230,7 @@ public class Bot {
             if (horizontalComponent == -verticalComponent) {
                 builder.append("SW");
             }
-        }else if (horizontalComponent < 0 && verticalComponent < 0) {
+        }else if (horizontalComponent < 0) {
             if (horizontalComponent == verticalComponent) {
                 builder.append("NW");
             }
