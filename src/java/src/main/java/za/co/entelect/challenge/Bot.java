@@ -7,6 +7,7 @@ import za.co.entelect.challenge.enums.Direction;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Bot {
 
@@ -14,12 +15,14 @@ public class Bot {
     private final GameState gameState;
     private final Opponent opponent;
     private final MyWorm currentWorm;
+    private final MyPlayer myPlayer;
 
     public Bot(Random random, GameState gameState) {
         this.random = random;
         this.gameState = gameState;
         this.opponent = gameState.opponents[0];
         this.currentWorm = getCurrentWorm(gameState);
+        this.myPlayer = gameState.myPlayer;
     }
 
     private MyWorm getCurrentWorm(GameState gameState) {
@@ -34,13 +37,22 @@ public class Bot {
         //Penyerangan
         Worm enemyWorm = getFirstWormInRange();
         if (enemyWorm != null) {
+            Worm wormpenderita = Arrays.stream(gameState.myPlayer.worms)
+                    .filter(myworm -> myworm.id != gameState.currentWormId
+                            && myworm.health > 0
+                            && euclideanDistance(myworm.position.x, myworm.position.y, enemyWorm.position.x, enemyWorm.position.y) <= 4
+                            && myworm.roundsUntilUnfrozen == 0)
+                    .findFirst()
+                    .orElse(null);
             if (canBanana(enemyWorm)) {
                 return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
-            }
-            else if (canSnowball(enemyWorm)) {
+            } else if (canSnowball(enemyWorm)) {
                 return new SnowballCommand(enemyWorm.position.x, enemyWorm.position.y);
-            }
-            else {
+            } else if (canSelect() && wormpenderita != null) {
+                //Kalau teman ada yang lagi diserang, select aja
+                Direction directionnya = resolveDirection(wormpenderita.position, enemyWorm.position);
+                return new SelectCommand(wormpenderita.id, directionnya);
+            } else {
                 Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
                 return new ShootCommand(direction);
             }
@@ -57,28 +69,42 @@ public class Bot {
             } else if (currentWorm.id == 3) {
                 surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 14, 14);
             }
-        }else */if(gameState.currentRound<=90 ||
+        }else */
+        if (gameState.currentRound <= 90 ||
                 ((currentWorm.position.x >= 15)
-                && (currentWorm.position.x <= 17)
-                && (currentWorm.position.y >= 15)
-                && (currentWorm.position.y <= 17))){
+                        && (currentWorm.position.x <= 17)
+                        && (currentWorm.position.y >= 15)
+                        && (currentWorm.position.y <= 17))) {
             surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
-        }else{
+        } else {
             surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 16, 16);
         }
 
         if (surroundingBlocks.size() > 0) {
             int cellIdx = random.nextInt(surroundingBlocks.size());
             Cell block = surroundingBlocks.get(cellIdx);
-            if (block.type == CellType.AIR) {
-                return new MoveCommand(block.x, block.y);
-            } else if (block.type == CellType.DIRT) {
-                return new DigCommand(block.x, block.y);
-            } else {
-                return new DoNothingCommand();
+            if (gameState.currentRound <= 90 ||
+                    ((currentWorm.position.x >= 15)
+                            && (currentWorm.position.x <= 17)
+                            && (currentWorm.position.y >= 15)
+                            && (currentWorm.position.y <= 17))) {
+                if (block.type == CellType.DIRT) {
+                    return new DigCommand(block.x, block.y);
+                } else if (block.type == CellType.AIR) {
+                    return new MoveCommand(block.x, block.y);
+                } else {
+                    return new DoNothingCommand();
+                }
+            }else{
+                if (block.type == CellType.AIR) {
+                    return new MoveCommand(block.x, block.y);
+                } else if (block.type == CellType.DIRT) {
+                    return new DigCommand(block.x, block.y);
+                }else {
+                    return new DoNothingCommand();
+                }
             }
         }
-
         return new DoNothingCommand();
     }
 
@@ -193,6 +219,10 @@ public class Bot {
                                     currentWorm.position.y,
                                     target.position.x,
                                     target.position.y) > currentWorm.snowballs.freezeRadius * Math.sqrt(2);
+    }
+
+    private boolean canSelect() {
+        return myPlayer.remainingWormSelections>0;
     }
 
     private int euclideanDistance(int aX, int aY, int bX, int bY) {
