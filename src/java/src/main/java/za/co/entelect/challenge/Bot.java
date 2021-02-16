@@ -195,7 +195,7 @@ public class Bot {
     }
 
     private boolean canBanana(Worm target) {
-        return (currentWorm.id==2)
+        return (((currentWorm.id==2)
                 && currentWorm.bananaBombs.count > 0
                 && euclideanDistance(currentWorm.position.x,
                                     currentWorm.position.y,
@@ -204,7 +204,15 @@ public class Bot {
                 && euclideanDistance(currentWorm.position.x,
                                     currentWorm.position.y,
                                     target.position.x,
-                                    target.position.y) > currentWorm.bananaBombs.damageRadius * 0.75;
+                                    target.position.y) > currentWorm.bananaBombs.damageRadius * 0.75)
+                ||
+                ((currentWorm.id==2)
+                        && currentWorm.bananaBombs.count > 0
+                        && currentWorm.health < 20 * currentWorm.bananaBombs.count
+                        && euclideanDistance(currentWorm.position.x,
+                                            currentWorm.position.y,
+                                            target.position.x,
+                                            target.position.y) <= currentWorm.bananaBombs.range));
     }
 
     private boolean canSnowball(Worm target) {
