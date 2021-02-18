@@ -21,7 +21,6 @@ public class Bot {
     private static MyWorm wormpilihan;
     private static Worm enemypilihan;
     private static boolean pilih;
-    private static boolean ditempel;
 
     public Bot(Random random, GameState gameState) {
         this.random = random;
@@ -81,18 +80,11 @@ public class Bot {
                     wormpilihan = currentWorm;
                     enemypilihan = enemyWorm;
                     lokasiBully = enemyWorm.position;
-                    if (currentWorm.id == 3 && currentWorm.snowballs.count>0
-                            && euclideanDistance(currentWorm.position.x,
-                            currentWorm.position.y,
-                            enemyWorm.position.x,
-                            enemyWorm.position.y) < currentWorm.snowballs.freezeRadius * Math.sqrt(2)) {
-                        ditempel = true;
                     }else{
                         return new ShootCommand(direction);
                     }
                 }
             }
-        }
 
         //kalau gaada musuh, dia bergerak (Perpindahan)
         List<Cell> surroundingBlocks = null;
@@ -124,15 +116,6 @@ public class Bot {
                 } else if (block.type == CellType.AIR) {
                     return new MoveCommand(block.x, block.y);
                 } else {
-                    return new DoNothingCommand();
-                }
-            }else if (ditempel && currentWorm.id == 3 && currentWorm.snowballs.count>0){
-                ditempel = false;
-                if (block.type == CellType.AIR) {
-                    return new MoveCommand(block.x, block.y);
-                } else if (block.type == CellType.DIRT) {
-                    return new DigCommand(block.x, block.y);
-                }else {
                     return new DoNothingCommand();
                 }
             } else{
