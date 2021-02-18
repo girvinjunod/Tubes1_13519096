@@ -80,11 +80,18 @@ public class Bot {
                     wormpilihan = currentWorm;
                     enemypilihan = enemyWorm;
                     lokasiBully = enemyWorm.position;
+                    if (currentWorm.id == 3 && currentWorm.snowballs.count>0
+                            && euclideanDistance(currentWorm.position.x,
+                            currentWorm.position.y,
+                            enemyWorm.position.x,
+                            enemyWorm.position.y) < currentWorm.snowballs.freezeRadius * Math.sqrt(2)) {
+                        ditempel = true;
                     }else{
                         return new ShootCommand(direction);
                     }
                 }
             }
+        }
 
         //kalau gaada musuh, dia bergerak (Perpindahan)
         List<Cell> surroundingBlocks = null;
@@ -116,6 +123,15 @@ public class Bot {
                 } else if (block.type == CellType.AIR) {
                     return new MoveCommand(block.x, block.y);
                 } else {
+                    return new DoNothingCommand();
+                }
+            }else if (ditempel && currentWorm.id == 3 && currentWorm.snowballs.count>0){
+                ditempel = false;
+                if (block.type == CellType.AIR) {
+                    return new MoveCommand(block.x, block.y);
+                } else if (block.type == CellType.DIRT) {
+                    return new DigCommand(block.x, block.y);
+                }else {
                     return new DoNothingCommand();
                 }
             } else{
@@ -292,7 +308,7 @@ public class Bot {
     }
 
     private boolean canSelect(Worm w){
-        return (gameState.myPlayer.remainingWormSelections>0) && (w.roundsUntilUnfrozen == 0) && (w.health>0);
+        return (gameState.myPlayer.remainingWormSelections>0) && (w.roundsUntilUnfrozen == 0);
     }
 
     private int euclideanDistance(int aX, int aY, int bX, int bY) {
