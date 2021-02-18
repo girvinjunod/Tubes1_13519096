@@ -52,9 +52,8 @@ public class Bot {
             }
         }
         //Penyerangan
-        List<Cell> healthBlock = getSurroundingHealth(currentWorm.position.x, currentWorm.position.y);
         Cell healblock = canHeal(currentWorm);
-        if (healthBlock.size()>0 && healblock != null){
+        if (healblock != null){
             return new MoveCommand(healblock.x, healblock.y);
         }
 
