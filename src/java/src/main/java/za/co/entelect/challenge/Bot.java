@@ -66,14 +66,14 @@ public class Bot {
                     timerbantuan = 5;
                     return new BananaCommand(enemyWormBombs.position.x, enemyWormBombs.position.y);
                 }
-            } else if (canSnowball(enemyWorm)) {
+            } else if (canSnowball(enemyWorm) && enemyWorm!=null) {
                 timerbantuan = 5;
                 lokasiBully = enemyWorm.position;
                 pilih = true;
                 wormpilihan = currentWorm;
                 enemypilihan = enemyWorm;
                 return new SnowballCommand(enemyWorm.position.x, enemyWorm.position.y);
-            } else {
+            } else if (enemyWorm != null) {
                 Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
                 if (direction != null) {
                     timerbantuan = 5;
@@ -82,14 +82,7 @@ public class Bot {
                     wormpilihan = currentWorm;
                     enemypilihan = enemyWorm;
                     lokasiBully = enemyWorm.position;
-                    if (currentWorm.id == 3 && currentWorm.snowballs.count>0
-                            && euclideanDistance(currentWorm.position.x,
-                            currentWorm.position.y,
-                            enemyWorm.position.x,
-                            enemyWorm.position.y) < currentWorm.snowballs.freezeRadius * Math.sqrt(2)) {
-                    }else{
-                        return new ShootCommand(direction);
-                    }
+                    return new ShootCommand(direction);
                 }
             }
         }
