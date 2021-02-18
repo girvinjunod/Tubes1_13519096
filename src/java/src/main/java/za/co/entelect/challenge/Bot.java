@@ -45,7 +45,7 @@ public class Bot {
                 timerbantuan = 0;
             }
             //Cek Apakah bisa select (diprioritaskan snowball trus select)
-            if (canSelect(currentWorm) && pilih) {
+            if (canSelect(wormpilihan) && pilih) {
                 Direction direction = resolveDirection(wormpilihan.position, enemypilihan.position);
                 if (direction != null && enemypilihan.health > 0) {
                     return new SelectCommand(wormpilihan.id, direction);
@@ -87,6 +87,7 @@ public class Bot {
                 Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
                 if (direction != null) {
                     timerbantuan = 5;
+                    //minta select duluan
                     pilih = true;
                     wormpilihan = currentWorm;
                     enemypilihan = enemyWorm;
@@ -112,10 +113,10 @@ public class Bot {
                 surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, lokasiBully.x, lokasiBully.y);
             }
         } else if (gameState.currentRound <= 70 ||
-                ((currentWorm.position.x >= 15)
-                        && (currentWorm.position.x <= 17)
-                        && (currentWorm.position.y >= 15)
-                        && (currentWorm.position.y <= 17))) {
+                ((currentWorm.position.x >= 14)
+                        && (currentWorm.position.x <= 18)
+                        && (currentWorm.position.y >= 14)
+                        && (currentWorm.position.y <= 18))) {
                 surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
             }else{
                 surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 16, 16);
@@ -125,10 +126,10 @@ public class Bot {
             int cellIdx = random.nextInt(surroundingBlocks.size());
             Cell block = surroundingBlocks.get(cellIdx);
             if (gameState.currentRound <= 90 ||
-                    ((currentWorm.position.x >= 15)
-                            && (currentWorm.position.x <= 17)
-                            && (currentWorm.position.y >= 15)
-                            && (currentWorm.position.y <= 17))) {
+                    ((currentWorm.position.x >= 14)
+                            && (currentWorm.position.x <= 18)
+                            && (currentWorm.position.y >= 14)
+                            && (currentWorm.position.y <= 18))) {
                 if (block.type == CellType.DIRT) {
                     return new DigCommand(block.x, block.y);
                 } else if (block.type == CellType.AIR) {
