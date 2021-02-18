@@ -269,7 +269,10 @@ public class Bot {
                 ||
                 ((currentWorm.id==2)
                         && currentWorm.bananaBombs.count > 0
+<<<<<<< HEAD
                         && currentWorm.roundsUntilUnfrozen == 0
+=======
+>>>>>>> 06e87b896f639d3d78e930c034d9d484f526b279
                         && currentWorm.health < 17 * currentWorm.bananaBombs.count
                         && euclideanDistance(currentWorm.position.x,
                                             currentWorm.position.y,
