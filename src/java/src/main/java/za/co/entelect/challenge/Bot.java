@@ -58,11 +58,14 @@ public class Bot {
         }
 
         Worm enemyWorm = getFirstWormInRange();
-        if (enemyWorm != null) {
-            if (canBanana(enemyWorm)) {
-                lokasiBully = enemyWorm.position;
-                timerbantuan = 5;
-                return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
+        Worm enemyWormBombs = getTargetBomb();
+        if (enemyWormBombs != null || enemyWorm != null) {
+            if (canBanana(enemyWormBombs)) {
+                if (enemyWormBombs != null) {
+                    lokasiBully = enemyWormBombs.position;
+                    timerbantuan = 5;
+                    return new BananaCommand(enemyWormBombs.position.x, enemyWormBombs.position.y);
+                }
             } else if (canSnowball(enemyWorm)) {
                 timerbantuan = 5;
                 lokasiBully = enemyWorm.position;
@@ -157,6 +160,26 @@ public class Bot {
         return null;
     }
 
+    private Worm getTargetBomb() {
+        if(currentWorm.bananaBombs != null) {
+            Set<String> cells = constructBomb(currentWorm.bananaBombs.range)
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .map(cell -> String.format("%d_%d", cell.x, cell.y))
+                    .collect(Collectors.toSet());
+
+            for (Worm enemyWorm : opponent.worms) {
+                if (enemyWorm.health > 0) {
+                    String enemyPosition = String.format("%d_%d", enemyWorm.position.x, enemyWorm.position.y);
+                    if (cells.contains(enemyPosition)) {
+                        return enemyWorm;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     private List<List<Cell>> constructFireDirectionLines(int range) {
         List<List<Cell>> directionLines = new ArrayList<>();
         for (Direction direction : Direction.values()) {
@@ -190,6 +213,37 @@ public class Bot {
 
         return directionLines;
     }
+
+    private List<List<Cell>> constructBomb(int range) {
+        List<List<Cell>> directionBombs = new ArrayList<>();
+        for (int Y = 0 ; Y <= range; Y++) {
+            List<Cell> directionBomb = new ArrayList<>();
+            for (int X = 0 ; X <= range; X++) {
+
+                int coordinateX = currentWorm.position.x + X;
+                int coordinateY = currentWorm.position.y + Y;
+
+                if (!isValidCoordinate(coordinateX, coordinateY)) {
+                    break;
+                }
+
+                if (euclideanDistance(currentWorm.position.x, currentWorm.position.y, coordinateX, coordinateY) > range) {
+                    break;
+                }
+
+                Cell cell = gameState.map[coordinateY][coordinateX];
+                if((cell.occupier != null)&&(cell.occupier.playerId == gameState.myPlayer.id)){
+                    break;
+                }
+
+                directionBomb.add(cell);
+            }
+            directionBombs.add(directionBomb);
+        }
+
+        return directionBombs;
+    }
+
 
     private List<Cell> getSurroundingHealth(int a, int b){
         ArrayList<Cell> HealthPack = new ArrayList<>();
