@@ -60,18 +60,7 @@ public class Bot {
         }
 
         Worm enemyWorm = getFirstWormInRange();
-        if (enemyWorm != null) {/*
-            List<Worm> wormpenderita = WormSelect();
-            if (canSelect() && wormpenderita.size() > 0 && currentWorm.roundsUntilUnfrozen > 0) {
-                //Kalau teman ada yang lagi diserang/difreeze, select aja
-                for (Worm worm : wormpenderita) {
-                    Direction directionnya = resolveDirection(worm.position, enemyWorm.position);
-                    if (directionnya != null) {
-                        select = true;
-                        return new SelectCommand(worm.id, directionnya, true);
-                    }
-                }
-            } else */
+        if (enemyWorm != null) {
             if (canBanana(enemyWorm)) {
                 lokasiBully = enemyWorm.position;
                 timerbantuan = 5;
@@ -289,7 +278,7 @@ public class Bot {
                 ((currentWorm.id==2)
                         && currentWorm.bananaBombs.count > 0
                         && currentWorm.roundsUntilUnfrozen == 0
-                        && currentWorm.health < 17 * currentWorm.bananaBombs.count
+                        && currentWorm.health < 20 * currentWorm.bananaBombs.count
                         && euclideanDistance(currentWorm.position.x,
                                             currentWorm.position.y,
                                             target.position.x,
@@ -297,6 +286,7 @@ public class Bot {
     }
 
     private boolean canSnowball(Worm target) {
+        //Kalau move nya ga jalan, mari kita beku bersama2 :)
         return (currentWorm.id==3)
                 && currentWorm.snowballs.count > 0
                 && target.roundsUntilUnfrozen == 0
@@ -307,38 +297,21 @@ public class Bot {
                 && euclideanDistance(currentWorm.position.x,
                                     currentWorm.position.y,
                                     target.position.x,
-                                    target.position.y) > currentWorm.snowballs.freezeRadius * Math.sqrt(2);
-                /*|| ((currentWorm.id==3)
+                                    target.position.y) > currentWorm.snowballs.freezeRadius * Math.sqrt(2)
+                || ((currentWorm.id==3)
                 && (currentWorm.roundsUntilUnfrozen == 0)
                 && currentWorm.health < 20 * currentWorm.snowballs.count
                 && euclideanDistance(currentWorm.position.x,
                 currentWorm.position.y,
                 target.position.x,
                 target.position.y) <= currentWorm.snowballs.range
-                );*/
+                );
     }
 
     private boolean canSelect(Worm w){
         return (gameState.myPlayer.remainingWormSelections>0) && (w.roundsUntilUnfrozen == 0);
     }
-    /*
-    private List<Worm> WormSelect() {
-        Worm enemyWorm = getFirstWormInRange();
-        List<Worm> wormpenderita = new ArrayList<>();
-        if (enemyWorm != null){
-            for (Worm myworm : gameState.myPlayer.worms) {
-                if (myworm.id != gameState.currentWormId
-                        && myworm.health > 0
-                        && myworm.health < 50
-                        && euclideanDistance(myworm.position.x, myworm.position.y, enemyWorm.position.x, enemyWorm.position.y) <= 6
-                        && myworm.roundsUntilUnfrozen == 0) {
-                    wormpenderita.add(myworm);
-                }
-            }
-        }
-        return wormpenderita;
-    }
-*/
+
     private int euclideanDistance(int aX, int aY, int bX, int bY) {
         return (int) (Math.sqrt(Math.pow(aX - bX, 2) + Math.pow(aY - bY, 2)));
     }
