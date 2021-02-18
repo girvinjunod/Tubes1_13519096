@@ -5,7 +5,7 @@ import za.co.entelect.challenge.enums.Direction;
 public class SelectCommand implements Command {
 
     private final int worm_id;
-    private Direction direction;
+    private final Direction direction;
 
 
     public SelectCommand(int worm_id, Direction direction) {
