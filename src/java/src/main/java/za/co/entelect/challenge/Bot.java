@@ -297,7 +297,7 @@ public class Bot {
     }
 
     private boolean canSelect(Worm w){
-        return (gameState.myPlayer.remainingWormSelections>0) && (w.roundsUntilUnfrozen == 0);
+        return (gameState.myPlayer.remainingWormSelections>0) && (w.roundsUntilUnfrozen == 0) && (w.health > 0);
     }
 
     private int euclideanDistance(int aX, int aY, int bX, int bY) {
