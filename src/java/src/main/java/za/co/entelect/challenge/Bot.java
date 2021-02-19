@@ -123,7 +123,7 @@ public class Bot {
         if (surroundingBlocks != null) {
             int cellIdx = random.nextInt(surroundingBlocks.size());
             Cell block = surroundingBlocks.get(cellIdx);
-            if (gameState.currentRound <= 90 ||
+            if (gameState.currentRound <= 70 ||
                     ((currentWorm.position.x >= 14)
                             && (currentWorm.position.x <= 18)
                             && (currentWorm.position.y >= 14)
