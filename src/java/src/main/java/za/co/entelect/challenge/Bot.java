@@ -4,7 +4,7 @@ import za.co.entelect.challenge.command.*;
 import za.co.entelect.challenge.entities.*;
 import za.co.entelect.challenge.enums.CellType;
 import za.co.entelect.challenge.enums.Direction;
-import za.co.entelect.challenge.enums.PowerUpType;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,29 +51,39 @@ public class Bot {
                 }
             }
         }
-        //Penyerangan
-        Cell healblock = canHeal(currentWorm);
+
+        Cell healblock = getTargetHealth();
         if (healblock != null){
             return new MoveCommand(healblock.x, healblock.y);
         }
 
-        Worm enemyWorm = getFirstWormInRange();
+        //Penyerangan Bomb
         Worm enemyWormBombs = getTargetBomb();
-        if (enemyWormBombs != null || enemyWorm != null) {
+        if (enemyWormBombs != null){
             if (canBanana(enemyWormBombs)) {
-                if (enemyWormBombs != null) {
-                    lokasiBully = enemyWormBombs.position;
-                    timerbantuan = 5;
-                    return new BananaCommand(enemyWormBombs.position.x, enemyWormBombs.position.y);
-                }
-            } else if (canSnowball(enemyWorm) && enemyWorm!=null) {
+                lokasiBully = enemyWormBombs.position;
+                timerbantuan = 5;
+                return new BananaCommand(enemyWormBombs.position.x, enemyWormBombs.position.y);
+            }
+        }
+
+        //Penyerangan Fire
+        Worm enemyWorm = getFirstWormInRange();
+        if (enemyWorm != null) {
+            //hapus dulu bantuannya kalau musuh udah sekarat
+            if (enemyWorm.health<=20){
+                timerbantuan = 0;
+            }
+
+            //lempar greedy snowballnya dan tembakannya
+            if (canSnowball(enemyWorm)) {
                 timerbantuan = 5;
                 lokasiBully = enemyWorm.position;
                 pilih = true;
                 wormpilihan = currentWorm;
                 enemypilihan = enemyWorm;
                 return new SnowballCommand(enemyWorm.position.x, enemyWorm.position.y);
-            } else if (enemyWorm != null) {
+            } else{
                 Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
                 if (direction != null) {
                     timerbantuan = 5;
@@ -100,9 +110,9 @@ public class Bot {
                         && (currentWorm.position.y >= 14)
                         && (currentWorm.position.y <= 18))) {
                 surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
-            }else{
-                surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 16, 16);
-            }
+        }else{
+            surroundingBlocks = get_cell_tujuan(currentWorm.position.x, currentWorm.position.y, 16, 16);
+        }
 
         if (surroundingBlocks != null) {
             int cellIdx = random.nextInt(surroundingBlocks.size());
@@ -173,6 +183,24 @@ public class Bot {
         return null;
     }
 
+    private Cell getTargetHealth() {
+            Set<String> cells = constructHealth()
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .map(cell -> String.format("%d_%d", cell.x, cell.y))
+                    .collect(Collectors.toSet());
+
+            for (Cell healthCell : getSurroundingCells(currentWorm.position.x,currentWorm.position.y)) {
+                if (healthCell != null) {
+                    String healthPosition = String.format("%d_%d", healthCell.x, healthCell.y);
+                    if (cells.contains(healthPosition)) {
+                        return healthCell;
+                    }
+                }
+            }
+        return null;
+    }
+
     private List<List<Cell>> constructFireDirectionLines(int range) {
         List<List<Cell>> directionLines = new ArrayList<>();
         for (Direction direction : Direction.values()) {
@@ -237,7 +265,41 @@ public class Bot {
         return directionBombs;
     }
 
+    private List<List<Cell>> constructHealth() {
+        List<List<Cell>> directionHealths = new ArrayList<>();
+        for (int Y = -1 ; Y <= 1; Y++) {
+            List<Cell> directionHealth = new ArrayList<>();
+            for (int X = -1 ; X <= 1; X++) {
 
+                int coordinateX = currentWorm.position.x + X;
+                int coordinateY = currentWorm.position.y + Y;
+
+                if (!isValidCoordinate(coordinateX, coordinateY)) {
+                    break;
+                }
+
+                if (euclideanDistance(currentWorm.position.x, currentWorm.position.y, coordinateX, coordinateY) > 1) {
+                    break;
+                }
+
+                Cell cell = gameState.map[coordinateY][coordinateX];
+                if (cell.powerUp == null) {
+                    break;
+                }
+
+                if((cell.occupier != null)&&(cell.occupier.playerId == gameState.myPlayer.id)){
+                    break;
+                }
+
+                directionHealth.add(cell);
+            }
+            directionHealths.add(directionHealth);
+        }
+
+        return directionHealths;
+    }
+
+/*
     private List<Cell> getSurroundingHealth(int a, int b){
         ArrayList<Cell> HealthPack = new ArrayList<>();
         for (int y = 2 ; y <= 30; y++) {
@@ -260,6 +322,7 @@ public class Bot {
         return null;
     }
 
+    */
 
     private List<Cell> getSurroundingCells(int x, int y) {
         ArrayList<Cell> cells = new ArrayList<>();
