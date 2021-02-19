@@ -2,7 +2,7 @@
 	"author": "Konvermex_135",
 	"email": "Konvermex_135@std.stei.itb.ac.id",
 	"nickName": "Konvermex_135",
-	"botLocation": "/target",
-	"botFileName": "java-sample-bot-jar-with-dependencies.jar",
+	"botLocation": "/",
+	"botFileName": "Konvermex_135.jar",
 	"botLanguage": "java"
 }
