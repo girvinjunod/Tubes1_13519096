@@ -1,5 +1,5 @@
 # Description
-Strategi algoritma greedy yang diimplementasikan ini adalah untuk algoritma bot dalam permainan worms dari entelect challence 2019. Algoritma greedy kami adalah greedy by damage di mana worms kami diprogram untuk selalu melakukan aksi yang memberikan damage terbesar ke worms musuh serta meminimalisir damage yang diterima.
+Strategi algoritma greedy yang diimplementasikan ini adalah untuk algoritma bot dalam permainan worms dari entelect challence 2019. Algoritma greedy kami adalah greedy by damage di mana worms kami diprogram untuk selalu melakukan aksi yang memberikan damage terbesar ke worms musuh serta meminimalisir damage yang diterima dengan cara memanfaatkan special weapon yang tersedia dan menghindari terjadinya friendly fire.
 
 # Requirements
 1. Java (minimal Java 8): https://www.oracle.com/java/technologies/javase/javasejdk8-downloads.html
