@@ -16,6 +16,7 @@ public class Bot {
     private final GameState gameState;
     private final Opponent opponent;
     private final MyWorm currentWorm;
+    private final MyPlayer myPlayer;
     private static Position lokasiBully;
     private static int timerbantuan;
     private static MyWorm wormpilihan;
@@ -27,6 +28,7 @@ public class Bot {
         this.gameState = gameState;
         this.opponent = gameState.opponents[0];
         this.currentWorm = getCurrentWorm(gameState);
+        this.myPlayer = gameState.myPlayer;
     }
 
     private MyWorm getCurrentWorm(GameState gameState) {
@@ -76,7 +78,11 @@ public class Bot {
             }
 
             //lempar greedy snowballnya dan tembakannya
-            if (canSnowball(enemyWorm)) {
+            if (canBanana(enemyWorm)) {
+                lokasiBully = enemyWorm.position;
+                timerbantuan = 5;
+                return new BananaCommand(enemyWorm.position.x, enemyWorm.position.y);
+            }else if (canSnowball(enemyWorm)) {
                 timerbantuan = 5;
                 lokasiBully = enemyWorm.position;
                 pilih = true;
@@ -152,14 +158,16 @@ public class Bot {
                 .collect(Collectors.toSet());
 
         for (Worm enemyWorm : opponent.worms) {
-            if (enemyWorm.health>0) {
-                String enemyPosition = String.format("%d_%d", enemyWorm.position.x, enemyWorm.position.y);
-                if (cells.contains(enemyPosition)) {
-                    return enemyWorm;
+            for (Worm friendWorm : myPlayer.worms) {
+                if (enemyWorm.health > 0) {
+                    String enemyPosition = String.format("%d_%d", enemyWorm.position.x, enemyWorm.position.y);
+                    String friendPosition = String.format("%d_%d",friendWorm.position.x, friendWorm.position.y);
+                    if (cells.contains(enemyPosition) && !cells.contains(friendPosition)) {
+                        return enemyWorm;
+                    }
                 }
             }
         }
-
         return null;
     }
 
