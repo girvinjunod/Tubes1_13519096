@@ -307,31 +307,6 @@ public class Bot {
         return directionHealths;
     }
 
-/*
-    private List<Cell> getSurroundingHealth(int a, int b){
-        ArrayList<Cell> HealthPack = new ArrayList<>();
-        for (int y = 2 ; y <= 30; y++) {
-            for (int x = 2; x <= 30; x++) {
-                Cell cell = gameState.map[y][x];
-                if ((cell.powerUp != null) && (cell.powerUp.type == PowerUpType.HEALTH_PACK) && (y != b) && (x != a) && (isValidCoordinate(x, y))) {
-                    HealthPack.add(cell);
-                }
-            }
-        }
-        return HealthPack;
-    }
-
-    private Cell canHeal(Worm w) {
-        for (Cell block : getSurroundingHealth(w.position.x, w.position.y)){
-            if (euclideanDistance(w.position.x, w.position.y, block.x, block.y)<=1){
-                return block;
-            }
-        }
-        return null;
-    }
-
-    */
-
     private List<Cell> getSurroundingCells(int x, int y) {
         ArrayList<Cell> cells = new ArrayList<>();
         for (int i = x - 1; i <= x + 1; i++) {
